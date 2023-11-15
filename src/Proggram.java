@@ -1,7 +1,7 @@
+import javax.lang.model.type.NullType;
 import java.io.IOException;
 import java.util.Scanner;
 public class Proggram {
-
         private static final LogReg logReg = new LogReg();
         private static final Scanner scanner = new Scanner(System.in);
         private Account currentAccount;
@@ -11,12 +11,7 @@ public class Proggram {
             while (true) {
                 System.out.println("Введите login: ");
                 String login = scanner.nextLine();
-
-                if (login.trim().equals("exit")) {
-                    start();
-                    return false;
-                }
-
+                Exit(login);
                 if (!logReg.isAccountExists(login)) {
                     System.out.println("login не верен");
                     login_vis_run();
@@ -24,11 +19,7 @@ public class Proggram {
 
                 System.out.println("Введите пароль: ");
                 String password = scanner.nextLine();
-
-                if (password.trim().equals("exit")) {
-                    start();
-                    return false;
-                }
+                Exit(password);
 
                 Account account = logReg.login(login.trim().toLowerCase(), password.trim());
                 if (account != null) {
@@ -54,28 +45,48 @@ public class Proggram {
         public void registrationBankAccount_vis() throws Exception {
             System.out.println("Введите login: ");
             String login = scanner.nextLine();
+            login = Validation.NotNullString(login);
+            Exit(login);
+
 
             System.out.println("Введите password: ");
             String password = scanner.nextLine();
+            password = Validation.NotNullString(password);
+            Exit(password);
 
             System.out.println("Введите имя: ");
             String name = scanner.nextLine();
+            name=  Validation.NotNullString(name);
+            Exit(name);
 
             System.out.println("Введите фамилию: ");
             String surname = scanner.nextLine();
+            surname = Validation.NotNullString(surname);
+            Exit(surname);
 
             String accountId = String.valueOf(logReg.getBankAccounts().size() + 1);
 
             System.out.println("Введите номер телефона(7XXXXXXXXXX): ");
             String phoneNumber = scanner.nextLine();
+            phoneNumber = Validation.PhoneNumber(phoneNumber);
+            Exit(phoneNumber);
 
             System.out.println("Введите имя, который будет на карте: ");
-            String cardHolderName = scanner.nextLine();
+            String cardName = scanner.nextLine();
+            cardName = Validation.NotNullString(cardName);
+            Exit(cardName);
 
-            BankAccount bankAccount = new BankAccount(login.toLowerCase().trim(), password, name.toLowerCase().trim(), surname.toLowerCase().trim(), accountId, phoneNumber, 0, "$", logReg.getBankAccounts(), cardHolderName.toLowerCase().trim()) {
+            BankAccount bankAccount = new BankAccount(login.toLowerCase().trim(), password, name.toLowerCase().trim(), surname.toLowerCase().trim(), accountId, phoneNumber, 0, " руб.", logReg.getBankAccounts(), cardName.toLowerCase().trim()) {
                 @Override
                 public void withdraw(double amount) {
+                    DebitCard card = getDebitCard();
 
+                    if (amount <= 0) {
+                        throw new IllegalArgumentException("Сумма депозита должна быть больше 0!");
+                    }
+
+                    card.setBalance(card.getBalance() - amount);
+                    setHistory(getFormatHistory(1, amount, null));
                 }
             };
             System.out.println(bankAccount.getLogin());
@@ -85,6 +96,14 @@ public class Proggram {
                 System.out.println("Такой пользователь уже есть");
             } else {
                 registration_run(bankAccount, false);
+            }
+        }
+
+        public static void Exit(String string) throws Exception {
+            String ex = "Exit";
+            if (string.equals(ex)) {
+                Proggram proggram = new Proggram();
+                proggram.start();
             }
         }
 
@@ -124,11 +143,10 @@ public class Proggram {
                         System.out.println("Неверный выбор. Попробуйте еще раз.");
                 }
 
-                scanner.nextLine();
             }
         }
 
-        public void mainFunction() {
+        public void mainFunction() throws Exception {
             if (currentAccount == null) {
                 System.out.println("Аккаунт не найден.");
                 return;
@@ -137,14 +155,13 @@ public class Proggram {
             while (true) {
                 System.out.println("\nВыберите действие:");
                 System.out.println("{1} Просмотреть баланс");
-                System.out.println("{2} Внести депозит");
-                System.out.println("{3} Снять средства");
-                System.out.println("{4} Перевести средства");
+                System.out.println("{2} Внести деньги");
+                System.out.println("{3} Снять деньги");
+                System.out.println("{4} Перевести деньги");
                 System.out.println("{5} Выйти");
                 System.out.print("Ваш выбор: ");
 
                 int choice = scanner.nextInt();
-                scanner.nextLine();
 
                 switch (choice) {
                     case 1:
@@ -160,7 +177,7 @@ public class Proggram {
                         makeTransfer();
                         break;
                     case 5:
-                        System.out.println("Выход из аккаунта...");
+                        System.out.println("Выход из аккаунта");
                         currentAccount = null;
                         return;
                     default:
@@ -183,7 +200,7 @@ public class Proggram {
         private void makeDeposit() {
             System.out.println("Укажите размер депозита: ");
             double num = scanner.nextDouble();
-
+            num = Validation.LimitMoney(num);
             getCurrentAccount().deposit(num);
             System.out.println(getCurrentAccount().getHistoryLast());
         }
@@ -191,14 +208,16 @@ public class Proggram {
         private void makeWithdrawal() {
             System.out.println("Укажите, сколько хотите снять: ");
             double num = scanner.nextDouble();
-
+            num = Validation.LimitMoney(num);
             getCurrentAccount().withdraw(num);
             System.out.println(getCurrentAccount().getHistoryLast());
         }
 
-        private void makeTransfer() {
+        private void makeTransfer() throws Exception {
             System.out.println("Укажите, сколько хотите перевести: ");
             int amount = scanner.nextInt();
+            amount = Validation.makeTransferValidation(amount);
+
             String login;
             while (true){
                 System.out.println("Укажите, login того, кому хотите перевести: ");
