@@ -57,8 +57,6 @@ public abstract class BankAccount extends Account implements Serializable {
         throw new IllegalStateException("Не удалось найти уникальный номер для карты");
     }
 
-    // основные операции
-
     public void deposit(double amount) {
         DebitCard card = getDebitCard();
 
@@ -136,25 +134,6 @@ public abstract class BankAccount extends Account implements Serializable {
         }
     }
 
-    public String getAccountDetails(boolean extended) {
-        DebitCard card = getDebitCard();
-        String details = "AccountId: " + this.getAccountId() + "\n" +
-                "Баланс: " + card.getBalance() + card.getCurrency() + "\n" +
-                "Пользователь: " + this.getFullName() + "\n" +
-                "Номер карты: " + this.getNumberCard() + "\n";
-
-        if (extended) {
-            details += card.getMainCardDetails() + "\n" +
-                    "Номер телефона: " + this.getPhoneNumber() + "\n" +
-                    "Тип аккаунта: " + getTypeAccount() + "\n" +
-                    "Последняя операция: " + getHistoryLast() + "\n" +
-                    "Время создания аккаунта: " + getTimeOpenAccount() + "\n";
-        }
-
-        return details;
-    }
-
-    // остальные методы
     private String generateNumberCard() {
         String result = "2806";
 

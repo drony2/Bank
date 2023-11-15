@@ -10,7 +10,7 @@ abstract class Account {
     private final ArrayList<String> history;
     private static int historyCount = 0;
     private String typeAccount;
-    private Credits credits;
+
 
     Account(String login, String password, String name, String surname, String accountID, String phoneNumber){
         this.login = login;
@@ -20,19 +20,6 @@ abstract class Account {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
         this.history = new ArrayList<>();
-        this.credits = null;
-    }
-
-
-    // getter and setter
-    public double getCreditBalance() {
-        return credits != null ? credits.getCredit() : 0;
-    }
-    public double getCreditInterestRate() {
-        return credits != null ? credits.getInterestRate() : 0;
-    }
-    public int getCreditTermInMonths() {
-        return credits != null ? credits.getCreditTermInMonths() : 0;
     }
 
     public String getHistoryLast() {
@@ -40,36 +27,21 @@ abstract class Account {
         catch (Exception e){ return  "Nothing"; }
     }
 
-    public String getHistoryAll() {
-        try {
-            String result = "";
-            for (String str: history) { result += str; }
-            return result;
-        }
-        catch (Exception e){ return "Nothing"; }
-    }
 
     public void setHistory(String str){
         history.add(str);
         historyCount++;
     }
 
-    public boolean hasCredit() {
-        return credits == null;
-    }
     public int getHistoryCount() { return historyCount; }
     public String getTypeAccount() { return typeAccount; }
     public void setTypeAccount(String typeAccount) { this.typeAccount = typeAccount; }
     public String getAccountId() { return accountId; }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
     public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
     public String getName() { return name; }
-    public String getSurname() { return surname; }
+
     public String getFullName() { return surname + " " + name; }
 
 

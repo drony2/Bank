@@ -16,11 +16,6 @@ public class LogReg {
         return accounts;
     }
 
-    public void setAccounts(ArrayList<Account> accounts) {
-        this.accounts = accounts;
-    }
-
-
     public Account login(String login, String password) {
         if (isAccountExists(login)){
             Account account = findLoginAccount(login);
@@ -98,13 +93,6 @@ public class LogReg {
         writer.println("Expiration Date: " + bankAccount.getDebitCard().getExpirationDate());
         writer.println("Balance: " + bankAccount.getDebitCard().getBalance());
         writer.println("Currency: " + bankAccount.getDebitCard().getCurrency());
-
-        if (bankAccount.hasCredit()) {
-            writer.println("Credit Data:");
-            writer.println("Credit Balance: " + bankAccount.getCreditBalance());
-            writer.println("Credit Interest Rate: " + bankAccount.getCreditInterestRate());
-            writer.println("Credit Term (Months): " + bankAccount.getCreditTermInMonths());
-        }
     }
     public boolean isAccountExists(String login) {
         for (Account account : accounts) {
@@ -122,15 +110,6 @@ public class LogReg {
             }
         }
         return false;
-    }
-
-    public Account findAccount(String fullName, String accountId, String login) {
-        for (Account account : accounts) {
-            if (account.getFullName().equals(fullName) && account.getAccountId().equals(accountId) && account.getLogin().equals(login)) {
-                return account;
-            }
-        }
-        return null;
     }
 
     public Account findLoginAccount(String login) {

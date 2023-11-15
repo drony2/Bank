@@ -31,20 +31,8 @@ public class BankCards {
         return cardNumber;
     }
 
-    public void setCardNumber(String cardNumber) throws Exception {
-        if (cardNumber.length() != 16){
-            throw new Exception("Не больше 16 значений должно быть у номера карты!");
-        }
-
-        this.cardNumber = cardNumber;
-    }
-
     public String getExpirationDate() {
         return expirationDate;
-    }
-
-    public void setExpirationDate(String expirationDate) {
-        this.expirationDate = expirationDate;
     }
 
     public double getBalance() {
@@ -68,11 +56,6 @@ public class BankCards {
         return cardHolderName;
     }
 
-    public void setCardHolderName(String cardHolderName) {
-        this.cardHolderName = cardHolderName;
-    }
-
-    // Остальные методы
     private String generateCvv(){
         String cardNumber = getCardNumber();
         String expirationDate = getExpirationDate();
